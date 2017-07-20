@@ -44,6 +44,9 @@ public class GeodeClientProbe implements Runnable {
   @Parameter(names={"--dump-host"}, description="dump host information")
   boolean dumpHost;
 
+  @Parameter(names={"-i"}, description="iterations")
+  int iterations = 1;
+
   @Parameter(names = "--help", help = true)
   private boolean help;
   
@@ -59,7 +62,11 @@ public class GeodeClientProbe implements Runnable {
       System.exit(0);
     }
     
-    probe.run();
+    for (int i = 0; i < probe.iterations; i++) {
+      logger.info("Running iteration {}", i);
+      probe.run();
+      Thread.sleep(1000);
+    }
   }
 
   @Override
@@ -82,7 +89,7 @@ public class GeodeClientProbe implements Runnable {
     int keys = region.sizeOnServer();
     logger.info("Found {} keys in region {}", keys, regionName);
 
-    logger.info("\nRegion {} contains the following keys:", regionName);
+    logger.info("Region {} contains the following keys:", regionName);
       for (Object key : region.keySetOnServer()) {
         Object val = region.get(key);
         logger.info("\t{} = {}", key, val);
